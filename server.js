@@ -18,9 +18,6 @@ app.use((req, res, next) => {
     next();
   });
 
-  const fs = require('fs');
-const path = require('path');
-
 // Save cookies to a file from the environment variable
 const cookiesPath = path.join(__dirname, 'cookies.txt');
 if (process.env.YT_COOKIES) {
