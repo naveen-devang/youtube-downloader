@@ -33,8 +33,10 @@ app.get('/api/info', async (req, res) => {
       }
   
       // Use yt-dlp (or youtube-dl) to get video info
-      const { stdout } = await execAsync(`yt-dlp -j "${videoURL}"`);
-      const info = JSON.parse(stdout);
+      const { stdout, stderr } = await execAsync(
+        `yt-dlp -j --user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" "${videoURL}"`
+    );
+          const info = JSON.parse(stdout);
       
       // Format the response
       const videoDetails = {
