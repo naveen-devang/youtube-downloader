@@ -18,6 +18,9 @@ app.use((req, res, next) => {
     next();
   });
 
+  const fs = require('fs');
+const path = require('path');
+
 // Save cookies to a file from the environment variable
 const cookiesPath = path.join(__dirname, 'cookies.txt');
 if (process.env.YT_COOKIES) {
@@ -40,8 +43,10 @@ app.get('/api/info', async (req, res) => {
       }
   
       // Use yt-dlp (or youtube-dl) to get video info
-      const { stdout } = await execAsync(`yt-dlp -j "${videoURL}"`);
-      const info = JSON.parse(stdout);
+      const { stdout, stderr } = await execAsync(
+        `yt-dlp -j --cookies "${cookiesPath}" "${videoURL}"`
+    );
+          const info = JSON.parse(stdout);
       
       // Format the response
       const videoDetails = {
