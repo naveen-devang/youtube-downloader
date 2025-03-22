@@ -18,6 +18,16 @@ app.use((req, res, next) => {
     next();
   });
 
+  const fs = require('fs');
+const path = require('path');
+
+// Save cookies to a file from the environment variable
+const cookiesPath = path.join(__dirname, 'cookies.txt');
+if (process.env.YT_COOKIES) {
+    fs.writeFileSync(cookiesPath, process.env.YT_COOKIES);
+}
+
+
 // Setup middleware
 app.use(cors());
 app.use(express.json());
@@ -33,10 +43,8 @@ app.get('/api/info', async (req, res) => {
       }
   
       // Use yt-dlp (or youtube-dl) to get video info
-      const { stdout, stderr } = await execAsync(
-        `yt-dlp -j --user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" "${videoURL}"`
-    );
-          const info = JSON.parse(stdout);
+      const { stdout } = await execAsync(`yt-dlp -j "${videoURL}"`);
+      const info = JSON.parse(stdout);
       
       // Format the response
       const videoDetails = {
