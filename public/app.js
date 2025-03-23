@@ -166,7 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
     addEventListeners();
 });
 
-const API_BASE_URL = 'http://localhost:3000/api';
+const API_BASE_URL = 'https://youtube-downloader-uoio.onrender.com/api';
 let currentVideoUrl = null;
 let ffmpeg = null;
 let availableFormats = [];
