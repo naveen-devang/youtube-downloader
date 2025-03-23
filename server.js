@@ -45,8 +45,9 @@ app.get('/api/info', async (req, res) => {
   
       // Use yt-dlp (or youtube-dl) to get video info
       const { stdout, stderr } = await execAsync(
-        `yt-dlp --cookies "${cookiesPath}" -j "${videoURL}"`
+        `yt-dlp --cookies-from-browser chrome -j "${videoURL}"`
     );
+    
 
     if (stderr) console.error(`⚠️ yt-dlp stderr:`, stderr);
       const info = JSON.parse(stdout);

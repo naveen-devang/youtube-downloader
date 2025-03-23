@@ -4,8 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "pip install yt-dlp"
-
+    "postinstall": "pip install yt-dlp browser-cookie3"
   },
   "keywords": [],
   "author": "",
