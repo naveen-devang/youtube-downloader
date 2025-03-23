@@ -23,6 +23,17 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 
+const cookiesPath = path.join(__dirname, 'cookies.txt');
+
+// Save cookies from environment variable (if present)
+if (process.env.YT_COOKIES) {
+    console.log("🔹 Writing cookies to file...");
+    fs.writeFileSync(cookiesPath, process.env.YT_COOKIES, 'utf8');
+} else {
+    console.error("❌ No YT_COOKIES environment variable found!");
+}
+
+
 // Check if youtube-dl or yt-dlp is installed
 app.get('/api/info', async (req, res) => {
     try {
@@ -33,26 +44,30 @@ app.get('/api/info', async (req, res) => {
       }
   
       // Use yt-dlp (or youtube-dl) to get video info
-      const { stdout } = await execAsync(`yt-dlp -j "${videoURL}"`);
+      const { stdout, stderr } = await execAsync(
+        `yt-dlp --cookies "${cookiesPath}" -j "${videoURL}"`
+    );
+
+    if (stderr) console.error(`⚠️ yt-dlp stderr:`, stderr);
       const info = JSON.parse(stdout);
       
       // Format the response
       const videoDetails = {
         videoId: info.id,
-        title: info.title,
-        author: info.uploader,
-        lengthSeconds: info.duration,
-        viewCount: info.view_count,
-        thumbnail: info.thumbnail,
-        formats: info.formats.map(format => ({
-          format_id: format.format_id,
-          quality: format.height ? `${format.height}p` : format.format_note,
-          resolution: format.resolution,
-          fps: format.fps,
-          hasVideo: format.vcodec !== 'none',
-          hasAudio: format.acodec !== 'none',
-          filesize: format.filesize,
-          vcodec: format.vcodec
+            title: info.title,
+            author: info.uploader,
+            lengthSeconds: info.duration,
+            viewCount: info.view_count,
+            thumbnail: info.thumbnail,
+            formats: info.formats.map(format => ({
+                format_id: format.format_id,
+                quality: format.height ? `${format.height}p` : format.format_note,
+                resolution: format.resolution,
+                fps: format.fps,
+                hasVideo: format.vcodec !== 'none',
+                hasAudio: format.acodec !== 'none',
+                filesize: format.filesize,
+                vcodec: format.vcodec
         }))
       };
   
