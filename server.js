@@ -12,6 +12,25 @@ const execAsync = promisify(exec);
 const { v4: uuidv4 } = require('uuid');
 
 
+const cookiesPath = path.join(__dirname, 'cookies.txt');
+
+// Save cookies from environment variable (if present)
+if (process.env.YT_COOKIES) {
+  console.log("🔹 Writing cookies to file...");
+  fs.writeFileSync(cookiesPath, process.env.YT_COOKIES, 'utf8');
+
+  // ✅ Confirm the file was created
+  if (fs.existsSync(cookiesPath)) {
+      console.log("✅ Cookies file created successfully.");
+      console.log("📝 Cookies file content:");
+      console.log(fs.readFileSync(cookiesPath, 'utf8')); // Print cookies
+  } else {
+      console.error("❌ Cookies file was NOT created.");
+  }
+} else {
+  console.error("❌ No YT_COOKIES environment variable found!");
+}
+
 app.use((req, res, next) => {
     res.header('Cross-Origin-Opener-Policy', 'same-origin');
     res.header('Cross-Origin-Embedder-Policy', 'require-corp');
@@ -22,16 +41,6 @@ app.use((req, res, next) => {
 app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
-
-const cookiesPath = path.join(__dirname, 'cookies.txt');
-
-// Save cookies from environment variable (if present)
-if (process.env.YT_COOKIES) {
-    console.log("🔹 Writing cookies to file...");
-    fs.writeFileSync(cookiesPath, process.env.YT_COOKIES, 'utf8');
-} else {
-    console.error("❌ No YT_COOKIES environment variable found!");
-}
 
 
 // Check if youtube-dl or yt-dlp is installed
